@@ -768,15 +768,12 @@
       return;
     }
 
-    // Monta mensagem para WhatsApp
-    const msg = encodeURIComponent(
-      `Olá! Vim pelo site da CrediRota e gostaria de uma simulação.\n\n` +
-      `👤 Nome: ${nome}\n` +
-      `📱 WhatsApp: ${tel}\n` +
-      `🪪 CPF: ${cpf}\n` +
-      `🏛️ Órgão: ${orgao}\n` +
-      `💬 Necessidade: ${tipo}`
-    );
+    // Envia lead para o CRM em background
+    fetch('https://web-production-a4604.up.railway.app/api/lead_site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, tel, cpf, orgao, tipo })
+    }).catch(function(e) { console.log('CRM indisponivel:', e); });
 
     // Dispara evento de conversão no Google Analytics
     if (typeof gtag !== 'undefined') {
@@ -786,6 +783,16 @@
         value: 1
       });
     }
+
+    // Monta mensagem para WhatsApp
+    const msg = encodeURIComponent(
+      `Olá! Vim pelo site da CrediRota e gostaria de uma simulação.\n\n` +
+      `👤 Nome: ${nome}\n` +
+      `📱 WhatsApp: ${tel}\n` +
+      `🪪 CPF: ${cpf}\n` +
+      `🏛️ Órgão: ${orgao}\n` +
+      `💬 Necessidade: ${tipo}`
+    );
 
     // Abre WhatsApp
     window.open(`https://wa.me/5545991198745?text=${msg}`, '_blank');
